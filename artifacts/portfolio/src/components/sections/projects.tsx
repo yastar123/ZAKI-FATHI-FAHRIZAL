@@ -185,30 +185,32 @@ function RichDetailSection({ project, accentColor = "primary" }: { project: any;
 
   return (
     <div className="lg:col-span-7 flex flex-col gap-8">
-      <div className="flex flex-wrap gap-1 border-b border-border pb-0">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 font-mono text-xs tracking-widest uppercase transition-all relative ${
-                activeTab === tab.id
-                  ? `${accentText} ${accentColor === "secondary" ? "bg-secondary/5" : "bg-primary/5"}`
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={12} />
-              {tab.label}
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId={`tab-indicator-${project.id}`}
-                  className={`absolute bottom-0 left-0 right-0 h-[2px] ${accentBg}`}
-                />
-              )}
-            </button>
-          );
-        })}
+      <div className="tabs-scroll border-b border-border">
+        <div className="flex min-w-max">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 font-mono text-[10px] sm:text-xs tracking-widest uppercase transition-all relative whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? `${accentText} ${accentColor === "secondary" ? "bg-secondary/5" : "bg-primary/5"}`
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={11} />
+                {tab.label}
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId={`tab-indicator-${project.id}`}
+                    className={`absolute bottom-0 left-0 right-0 h-[2px] ${accentBg}`}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
@@ -439,30 +441,32 @@ function Project02DetailSection({ project }: { project: any }) {
 
   return (
     <div className="lg:col-span-7 flex flex-col gap-8">
-      <div className="flex flex-wrap gap-1 border-b border-border pb-0">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 font-mono text-xs tracking-widest uppercase transition-all relative ${
-                activeTab === tab.id
-                  ? "text-primary bg-primary/5"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={12} />
-              {tab.label}
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId="tab-indicator"
-                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                />
-              )}
-            </button>
-          );
-        })}
+      <div className="tabs-scroll border-b border-border">
+        <div className="flex min-w-max">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 font-mono text-[10px] sm:text-xs tracking-widest uppercase transition-all relative whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "text-primary bg-primary/5"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon size={11} />
+                {tab.label}
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="tab-indicator"
+                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">

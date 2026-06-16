@@ -43,12 +43,12 @@ function CustomCursor() {
 
   return (
     <>
-      <div 
-        className="fixed top-0 left-0 w-3 h-3 bg-primary rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_var(--color-primary)]"
+      <div
+        className="custom-cursor fixed top-0 left-0 w-3 h-3 bg-primary rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 shadow-[0_0_10px_var(--color-primary)]"
         style={{ left: mousePosition.x, top: mousePosition.y }}
       />
-      <motion.div 
-        className="fixed top-0 left-0 w-11 h-11 border border-primary rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2"
+      <motion.div
+        className="custom-cursor fixed top-0 left-0 w-11 h-11 border border-primary rounded-full pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2"
         style={{ x: springX, y: springY }}
         animate={{ scale: isHovering ? 1.5 : 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}

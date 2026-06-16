@@ -57,7 +57,7 @@ export default function About() {
   return (
     <section id="about" className="relative bg-card border-y border-border">
       {/* Main about content */}
-      <div className="py-20 md:py-32 bg-grid-pattern">
+      <div className="py-16 sm:py-20 md:py-32 bg-grid-pattern">
         <motion.div
           ref={containerRef}
           variants={containerVariants}
@@ -65,28 +65,27 @@ export default function About() {
           animate={inView ? "visible" : "hidden"}
           className="container mx-auto px-4 sm:px-6 relative z-10"
         >
-          <div className="flex items-center gap-4 mb-12 md:mb-16 font-mono text-xs tracking-widest text-primary">
-            <div className="w-2 h-2 bg-primary animate-blink" />
+          <div className="flex items-center gap-3 mb-10 md:mb-16 font-mono text-xs tracking-widest text-primary">
+            <div className="w-2 h-2 bg-primary animate-blink flex-shrink-0" />
             SYSTEM STATUS: ONLINE
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 relative">
             <div className="hidden lg:block absolute left-[33%] top-0 bottom-0 w-[1px] bg-border" />
 
             <motion.div variants={itemVariants} className="lg:col-span-4 lg:pr-12">
-              <h2 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tight flex flex-col mb-10 md:mb-12">
+              <h2 className="text-5xl md:text-6xl font-display font-bold uppercase tracking-tight flex flex-col mb-8 md:mb-12">
                 <span className="text-muted-foreground/50 text-sm font-mono mb-4 tracking-widest">01 // Profile</span>
                 System
                 <span className="text-primary">Specs</span>
               </h2>
               <div className="prose prose-invert max-w-none">
-                <p className="text-base md:text-lg leading-relaxed font-light text-muted-foreground">
+                <p className="text-sm sm:text-base md:text-lg leading-relaxed font-light text-muted-foreground">
                   {DATA.about.bio}
                 </p>
               </div>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mt-8">
+              <div className="flex flex-wrap gap-2 mt-6 md:mt-8">
                 {["CFD", "FEA", "Thermal Analysis", "Structural Mechanics", "Fluid Dynamics"].map((tag) => (
                   <span key={tag} className="font-mono text-[10px] text-primary border border-primary/30 px-2 py-1 bg-primary/5 uppercase tracking-wider">
                     {tag}
@@ -96,29 +95,29 @@ export default function About() {
             </motion.div>
 
             <div className="lg:col-span-8 lg:pl-12">
-              <motion.div variants={itemVariants} className="grid grid-cols-1 gap-8 md:gap-12 font-mono">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-border pb-6 md:pb-8 gap-4">
-                  <div className="text-sm text-muted-foreground uppercase tracking-widest">Cumulative GPA</div>
+              <motion.div variants={itemVariants} className="grid grid-cols-1 gap-6 md:gap-10 font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-border pb-5 md:pb-8 gap-3">
+                  <div className="text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">Cumulative GPA</div>
                   <div className="text-5xl sm:text-6xl lg:text-8xl text-foreground font-light leading-none">
                     <AnimatedNumber value={3.64} />
                     <span className="text-xl sm:text-2xl text-muted-foreground">/4.00</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-border pb-6 md:pb-8 gap-4">
-                  <div className="text-sm text-muted-foreground uppercase tracking-widest">UNSW WAM</div>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-border pb-5 md:pb-8 gap-3">
+                  <div className="text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">UNSW WAM</div>
                   <div className="text-5xl sm:text-6xl lg:text-8xl text-foreground font-light leading-none">
                     <AnimatedNumber value={76.67} />
                     <span className="text-xl sm:text-2xl text-muted-foreground">/100</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col border-b border-border pb-6 md:pb-8">
-                  <div className="text-sm text-muted-foreground mb-3 uppercase tracking-widest">Award</div>
-                  <div className="text-lg md:text-2xl text-primary uppercase leading-relaxed font-bold">
+                <div className="flex flex-col border-b border-border pb-5 md:pb-8">
+                  <div className="text-xs sm:text-sm text-muted-foreground mb-3 uppercase tracking-widest">Award</div>
+                  <div className="text-base sm:text-lg md:text-2xl text-primary uppercase leading-relaxed font-bold">
                     {DATA.about.scholarship.split("—")[0]}
                   </div>
-                  <div className="text-sm text-muted-foreground mt-2">
+                  <div className="text-xs sm:text-sm text-muted-foreground mt-2">
                     {DATA.about.scholarship.split("—")[1]}
                   </div>
                 </div>
@@ -129,22 +128,22 @@ export default function About() {
       </div>
 
       {/* Stats Strip */}
-      <div ref={statsRef} className="border-t border-border bg-background/50 py-12 md:py-16 overflow-hidden">
+      <div ref={statsRef} className="border-t border-border bg-background/50 py-10 md:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {DATA.stats.map((stat, i) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={statsInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
-                className="text-center group"
+                className="text-center group py-2"
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary group-hover:glow-text-primary transition-all">
+                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary group-hover:glow-text-primary transition-all">
                   {statsInView && <AnimatedNumber value={stat.value} suffix={stat.suffix} duration={1.5} />}
                   {!statsInView && <span>0{stat.suffix}</span>}
                 </div>
-                <div className="font-mono text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest mt-2">
+                <div className="font-mono text-[9px] sm:text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest mt-1.5">
                   {stat.label}
                 </div>
               </motion.div>
@@ -153,17 +152,23 @@ export default function About() {
         </div>
       </div>
 
-      {/* Tools Used strip */}
-      <div className="border-t border-border py-6 overflow-hidden bg-muted/30">
+      {/* Tools Marquee */}
+      <div className="border-t border-border py-4 sm:py-6 overflow-hidden bg-muted/30">
         <div className="relative flex">
           <motion.div
-            className="flex gap-12 items-center font-mono text-[11px] text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap"
-            animate={{ x: [0, -800] }}
-            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            className="flex gap-8 sm:gap-12 items-center font-mono text-[10px] sm:text-[11px] text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap"
+            animate={{ x: [0, -1000] }}
+            transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
           >
-            {["ANSYS 2025 R2", "SolidWorks", "CATIA", "ABAQUS", "MATLAB", "Python", "C+", "Arduino", "ANSYS Fluent", "ANSYS FEA", "SolidWorks Simulation", "CFD", "FEA", "Infrared Sensing", "ANSYS 2025 R2", "SolidWorks", "CATIA", "ABAQUS", "MATLAB"].map((tool, i) => (
-              <span key={i} className="flex items-center gap-3">
-                <span className="w-1 h-1 bg-primary/40 rounded-full inline-block" />
+            {[
+              "ANSYS 2025 R2", "SolidWorks", "CATIA", "ABAQUS", "MATLAB",
+              "Python", "C+", "Arduino", "ANSYS Fluent", "ANSYS FEA",
+              "SolidWorks Sim", "CFD", "FEA", "Infrared Sensing",
+              "ANSYS 2025 R2", "SolidWorks", "CATIA", "ABAQUS", "MATLAB",
+              "Python", "C+", "Arduino", "ANSYS Fluent", "ANSYS FEA",
+            ].map((tool, i) => (
+              <span key={i} className="flex items-center gap-2 sm:gap-3">
+                <span className="w-1 h-1 bg-primary/40 rounded-full inline-block flex-shrink-0" />
                 {tool}
               </span>
             ))}
