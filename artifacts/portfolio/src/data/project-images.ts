@@ -29,10 +29,33 @@ import img02_burner from "@assets/image_1781615267195.png";
 import img02_tunnel from "@assets/image_1781615271766.png";
 import img02_intern from "@assets/image_1781615276158.png";
 
+import img04_a from "@assets/image_1781616503998.png";
+import img04_b from "@assets/image_1781616544739.png";
+import img04_c from "@assets/image_1781616550287.png";
+import img04_d from "@assets/image_1781616570560.png";
+import img04_e from "@assets/image_1781616575304.png";
+import img04_f from "@assets/image_1781616580077.png";
+import img04_g from "@assets/image_1781616640692.png";
+import img04_h from "@assets/image_1781616680068.png";
+import img04_i from "@assets/image_1781616688123.png";
+import img04_j from "@assets/image_1781616691758.png";
+import img04_k from "@assets/image_1781616695564.png";
+import img04_l from "@assets/image_1781616704656.png";
+import img04_m from "@assets/image_1781616711677.png";
+
+import img05_a from "@assets/image_1781616783296.png";
+import img05_b from "@assets/image_1781616788006.png";
+import img05_c from "@assets/image_1781616800764.png";
+import img05_d from "@assets/image_1781616861235.png";
+import img05_e from "@assets/image_1781616865717.png";
+import img05_f from "@assets/image_1781616871039.png";
+import img05_g from "@assets/image_1781616904493.png";
+import img05_h from "@assets/image_1781616910889.png";
+
 export interface ProjectImage {
   src: string;
   caption: string;
-  type: "site" | "cad" | "cfd" | "data" | "chart" | "software" | "analysis";
+  type: "site" | "cad" | "cfd" | "data" | "chart" | "software" | "analysis" | "test" | "fea";
 }
 
 export const PROJECT_01_IMAGES: ProjectImage[] = [
@@ -68,4 +91,31 @@ export const PROJECT_02_IMAGES: ProjectImage[] = [
   { src: img02_burner, caption: "Kiln Burner Zone — Interior View of the Burning Zone (Gas Temp: 1450°C)", type: "site" },
   { src: img02_tunnel, caption: "Inside Rotary Kiln Tunnel — Fired Refractory Brick Lining Condition", type: "site" },
   { src: img02_intern, caption: "Field Inspection — Process Engineering Intern inside Rotary Kiln during Shutdown", type: "site" },
+];
+
+export const PROJECT_04_IMAGES: ProjectImage[] = [
+  { src: img04_a, caption: "sUNSWim ROV — Full AUV III Assembly in Pool Testing Environment", type: "test" },
+  { src: img04_b, caption: "SolidWorks CAD — AUV III Chassis Full Assembly with 6-Thruster Configuration", type: "cad" },
+  { src: img04_c, caption: "3D Printed Components — Vacuum Pump Handles and Thruster Guard Prototypes", type: "site" },
+  { src: img04_d, caption: "ANSYS CFD — Drag Coefficient Analysis at 1 m/s (Cd 0.91–0.97 in Air)", type: "cfd" },
+  { src: img04_e, caption: "ANSYS FEA — Hydrostatic Pressure Load at 5m Depth (Structural Validation)", type: "fea" },
+  { src: img04_f, caption: "SolidWorks CAD — Propeller Vortex Guard Design with Flow Optimization", type: "cad" },
+  { src: img04_g, caption: "ROV Assembly — Light and Hydrophone Mounting System on AUV III Frame", type: "site" },
+  { src: img04_h, caption: "Component Detail — Bumper Design for Obstacle Protection in Competition", type: "cad" },
+  { src: img04_i, caption: "SolidWorks CAD — AUV II Shell Redesign for Cable Management Optimization", type: "cad" },
+  { src: img04_j, caption: "Pool Testing — sUNSWim ROV Underwater Maneuvering Validation", type: "test" },
+  { src: img04_k, caption: "Team Testing — sUNSWim Mechanical Team During Pool Trial Session", type: "site" },
+  { src: img04_l, caption: "CFD Results — Pressure Distribution and Streamlines around AUV III Hull", type: "cfd" },
+  { src: img04_m, caption: "Centre of Buoyancy/Mass Analysis — Stability Optimization for SAUVC 2026", type: "analysis" },
+];
+
+export const PROJECT_05_IMAGES: ProjectImage[] = [
+  { src: img05_a, caption: "Knee Brace — Full Assembly SolidWorks Model for Osteoarthritis Application", type: "cad" },
+  { src: img05_b, caption: "Dog Clutch Mechanism — Modular Gearing System for Easy Component Swap", type: "cad" },
+  { src: img05_c, caption: "ANSYS FEA — Von-Mises Stress Distribution (Max 6.56 MPa, Al 6061 Limit 95 MPa)", type: "fea" },
+  { src: img05_d, caption: "Fatigue Life Analysis — Cycle Count Distribution (>1 Million Cycles Validated)", type: "analysis" },
+  { src: img05_e, caption: "Gearing System — Upper to Lower Knee Brace Connection Mechanism Detail", type: "cad" },
+  { src: img05_f, caption: "SolidWorks Simulation — Boundary Conditions Setup (30 Nm Torque, 80 kg Load)", type: "software" },
+  { src: img05_g, caption: "Factor of Safety Map — FoS > 13 across All Critical Load Paths", type: "fea" },
+  { src: img05_h, caption: "Traction System — Knee Joint Stress Reduction Mechanism Schematic", type: "analysis" },
 ];

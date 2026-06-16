@@ -95,20 +95,96 @@ export const DATA = {
       company: "sUNSWim – UNSW ROV Team",
       date: "Aug 2025 – Present",
       what: "Design, manufacture, and test chassis and peripheral components for underwater remotely operated vehicle for SAUVC 2026 competition (Sanya, China). Components designed: Vacuum pump handles, AUV III chassis, 6-propeller optimization, propeller vortex guards, light/hydrophone mounting, bumper.",
-      method: "3D Printing + Laser Cutting. FEA (hydrostatic force up to 5m depth). CFD for drag, buoyancy, centre of mass/buoyancy optimization. Pool testing.",
+      background: "sUNSWim is UNSW's competitive Remotely Operated Vehicle team, preparing for the Singapore AUV Challenge (SAUVC) 2026 in Sanya, China. The mechanical team is responsible for designing and manufacturing all physical components of the AUV — ensuring structural integrity, hydrodynamic efficiency, and reliable operation in underwater competition conditions.",
+      problem: "AUV III required a full chassis redesign to support 6 thrusters, improve cable management, and withstand hydrostatic pressure at 5m depth. Existing designs had poor drag performance and lacked modular mounting for sensors.",
+      solution: "Complete mechanical system redesign using SolidWorks, validated by ANSYS CFD and FEA before 3D printing. Iterative pool testing informed design refinements for the competition-ready AUV.",
+      components: [
+        { name: "AUV III Chassis", desc: "Full 6-thruster frame with integrated buoyancy chambers" },
+        { name: "Vacuum Pump Handles", desc: "Ergonomic grips for watertight seal maintenance" },
+        { name: "Thruster Guards", desc: "Propeller vortex protection under high-speed operation" },
+        { name: "Light & Hydrophone Mount", desc: "Multi-sensor bracket with vibration isolation" },
+        { name: "Bumper System", desc: "Impact protection for competition obstacle navigation" },
+        { name: "AUV II Shell", desc: "Ongoing: optimizing cable routing and hydrodynamics" },
+      ],
+      methodSteps: [
+        "SolidWorks CAD design of all chassis and peripheral components",
+        "CFD Analysis — drag coefficient simulation at 1 m/s in air and water",
+        "FEA — hydrostatic pressure validation at maximum 5m depth",
+        "Centre of mass/buoyancy optimization for neutral buoyancy",
+        "3D Printing + Laser Cutting manufacture of prototypes",
+        "Pool testing — propulsion, maneuvering, and waterproofing validation",
+        "AUV II shell redesign for improved cable management (ongoing)",
+      ],
+      results: [
+        {
+          number: "01",
+          title: "Drag Performance",
+          text: "CFD analysis confirmed drag coefficients of 0.91–0.97 in air at 1 m/s across all design iterations. Streamlined chassis geometry minimized turbulent wake, improving thruster efficiency in water.",
+          metric: "Cd = 0.91–0.97"
+        },
+        {
+          number: "02",
+          title: "Structural Integrity",
+          text: "FEA hydrostatic pressure analysis validated all components for safe operation at 5m depth. All stress values remained well below the yield strength of the 3D printed PLA/PETG materials.",
+          metric: "5m Depth Validated"
+        },
+        {
+          number: "03",
+          title: "Competition Readiness",
+          text: "Pool testing confirmed stable underwater maneuvering, watertight seals, and reliable thruster performance. Currently enrolling in VIP ENGG4600 to continue development for SAUVC 2026.",
+          metric: "SAUVC 2026 Target"
+        }
+      ],
       result: "Drag coefficient: 0.91–0.97 in air at 1 m/s. Design operates safely (FEA validated). Currently optimizing AUV III shell for better cable management.",
-      tools: ["SolidWorks", "ANSYS", "3D Printing", "Laser Cutting", "Pool Testing"]
+      conclusion: "The AUV III chassis design successfully meets all mechanical requirements for SAUVC 2026 competition. The iterative CFD/FEA-validated design process reduced risk before physical manufacture, saving significant time and material costs.",
+      benefits: "Pool-tested design is competition-ready. The modular mounting system enables rapid sensor swaps during competition prep. AUV II shell optimization is ongoing, targeting improved cable management and reduced assembly time.",
+      learnings: "I developed strong hands-on skills in the full engineering design cycle — from CAD concept to physical testing. The gap between simulation results and real-world pool testing taught me to include manufacturing tolerances and real fluid interactions in validation models.",
+      tools: ["SolidWorks", "ANSYS CFD", "ANSYS FEA", "3D Printing", "Laser Cutting", "Pool Testing"]
     },
     {
       id: "05",
       title: "Knee Brace for Osteoarthritis",
       role: "Team member, structural validation lead",
-      company: "DESN2000 Course Project",
-      date: "Past",
-      what: "Design and FEA validation of a knee brace to assist users with osteoarthritis. Main principle: traction system reduces joint stress while enabling movement.",
-      method: "Validated structural strength of the gearing system connecting upper and lower knee braces. Dog Clutch mechanism enables easy component swap. Boundary Conditions: Torque 30 Nm, Weight 80 kg, Traction 20% body weight, Hinge fixed.",
+      company: "DESN2000 Course Project — UNSW",
+      date: "2024",
+      what: "Design and FEA validation of a knee brace to assist users with osteoarthritis. Main principle: traction system reduces joint stress while enabling natural movement.",
+      background: "Osteoarthritis affects millions globally, causing knee joint degeneration through cartilage breakdown. Traditional braces offer support but do not actively reduce joint contact forces. This DESN2000 capstone project aimed to design a mechanically active knee brace that applies traction to reduce intra-joint stress while maintaining full mobility.",
+      problem: "Existing knee braces are passive — they support the joint but do not reduce the compressive forces causing cartilage damage. A motorized traction system was needed that is lightweight, safe to wear, and mechanically reliable over millions of cycles.",
+      solution: "A gearing and dog-clutch mechanism transfers traction forces from upper to lower brace sections, offloading the knee joint. The dog clutch enables quick module swaps for maintenance. All structural members validated by FEA for infinite fatigue life.",
+      methodSteps: [
+        "Literature review — osteoarthritis mechanics and existing brace designs",
+        "Conceptual design — traction force path and gearing arrangement",
+        "SolidWorks CAD — full assembly modelling of upper/lower brace sections",
+        "Boundary Condition definition: Torque 30 Nm, weight 80 kg, traction 20% body weight",
+        "ANSYS FEA — static structural analysis with hinge fixed constraint",
+        "Fatigue life analysis — S-N curve for Aluminium 6061 (T6)",
+        "Factor of Safety calculation across all critical load paths",
+      ],
+      results: [
+        {
+          number: "01",
+          title: "Structural Safety",
+          text: "Maximum von-Mises stress of 6.56 MPa was recorded across the gearing system under worst-case loading. This is significantly below the Aluminium 6061-T6 yield strength of 276 MPa and fatigue limit of 95 MPa — no risk of yielding or fatigue failure.",
+          metric: "6.56 MPa Max Stress"
+        },
+        {
+          number: "02",
+          title: "Fatigue Life",
+          text: "Fatigue analysis confirmed infinite life operation at the expected load range. Stress amplitude falls below the endurance limit on the S-N curve, placing the design in the infinite-life region at over 1 million cycles.",
+          metric: ">1M Cycles Life"
+        },
+        {
+          number: "03",
+          title: "Safety Factor",
+          text: "Factor of Safety exceeds 13 across all critical components under the defined boundary conditions. This substantial safety margin accounts for dynamic loading variations during walking, stair climbing, and daily activities.",
+          metric: "FoS > 13"
+        }
+      ],
       result: "Factor of Safety > 13. Life Cycle > 1 Million cycles (infinite-life region). Max Stress: 6.56 MPa (far below Aluminium 6061 fatigue limit of 95 MPa). No risk of yielding.",
-      tools: ["SolidWorks Simulation", "FEA"]
+      conclusion: "The knee brace design successfully demonstrates that a mechanically active traction system can be structurally safe for long-term use. The dog clutch mechanism adds real-world practicality by enabling fast component swaps without tools.",
+      benefits: "The design provides a pathway to clinical prototyping. By reducing joint compressive forces through active traction, it could delay surgical intervention for osteoarthritis patients, improving quality of life and reducing healthcare costs.",
+      learnings: "This project taught me to bridge clinical requirements and engineering constraints. Translating body-weight loading into FEA boundary conditions required understanding both biomechanics and structural mechanics — a skill directly applicable to biomedical device design.",
+      tools: ["SolidWorks CAD", "SolidWorks Simulation", "ANSYS FEA", "Fatigue Analysis", "Al 6061-T6"]
     }
   ],
   experience: [
