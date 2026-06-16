@@ -3,5 +3,8 @@
   "buildCommand": "pnpm --dir artifacts/portfolio run build",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "artifacts/portfolio/dist/public",
-  "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
 }
