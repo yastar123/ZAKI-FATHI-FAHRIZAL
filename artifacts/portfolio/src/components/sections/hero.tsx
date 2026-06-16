@@ -23,6 +23,13 @@ export default function Hero() {
       
       <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/50 to-background z-10 pointer-events-none" />
 
+      {/* Floating HUD readouts */}
+      <div className="absolute top-24 right-6 md:right-12 z-20 font-mono text-[10px] md:text-xs text-primary border border-primary/30 p-2 bg-background/50 backdrop-blur-sm hidden sm:block">
+        <div>SYS_TEMP: 23.4C <span className="animate-blink">_</span></div>
+        <div>RENDER_FPS: 60</div>
+        <div>UPTIME: 100%</div>
+      </div>
+
       <motion.div 
         className="container mx-auto px-6 z-20 relative"
         style={{ y: yText, opacity: opacityText }}
@@ -42,6 +49,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="glitch-text"
           >
             ZAKI FATHI
           </motion.div>
@@ -49,7 +57,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-outline-primary ml-[5vw] hover:text-primary transition-colors duration-500 cursor-default"
+            className="text-outline-primary ml-[5vw] hover:text-primary transition-colors duration-500 cursor-default glitch-text-2"
           >
             FAHRIZAL
           </motion.div>
@@ -82,12 +90,12 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <motion.div 
-        className="absolute bottom-12 left-6 sm:left-12 z-20 font-mono flex items-center gap-4 text-xs text-muted-foreground"
+        className="absolute bottom-12 left-6 sm:left-12 z-20 font-mono flex items-center gap-4 text-xs text-primary"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 1 }}
       >
-        <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border border-primary flex items-center justify-center">
           <motion.div
             animate={{ y: [0, 5, 0] }}
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
@@ -95,7 +103,7 @@ export default function Hero() {
             <ArrowDown size={12} className="text-primary" />
           </motion.div>
         </div>
-        <span>SCROLL_TO_EXPLORE</span>
+        <span>SCROLL_INIT</span>
       </motion.div>
     </section>
   );

@@ -1,9 +1,154 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { DATA } from "@/data/portfolio";
-import { Cpu, LayoutTemplate, Activity, Settings2, ShieldCheck } from "lucide-react";
+import { Cpu, LayoutTemplate, Activity, Settings2, ShieldCheck, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { PROJECT_01_IMAGES } from "@/data/project-images";
 
 const ICONS = [Cpu, Activity, LayoutTemplate, Settings2, ShieldCheck];
+
+function ProjectImageGallery() {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedIndex(null);
+      if (e.key === "ArrowRight" && selectedIndex !== null) {
+        setSelectedIndex((prev) => (prev! + 1) % PROJECT_01_IMAGES.length);
+      }
+      if (e.key === "ArrowLeft" && selectedIndex !== null) {
+        setSelectedIndex((prev) => (prev! - 1 + PROJECT_01_IMAGES.length) % PROJECT_01_IMAGES.length);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIndex]);
+
+  const heroImage = PROJECT_01_IMAGES[0];
+  const gridImages = PROJECT_01_IMAGES.slice(1);
+
+  return (
+    <div className="mt-16 w-full">
+      <div className="flex items-center gap-4 mb-8">
+        <h4 className="font-mono text-sm tracking-widest text-primary uppercase">VISUAL_EVIDENCE //</h4>
+        <div className="h-[1px] flex-grow bg-border relative overflow-hidden">
+          <motion.div 
+            className="absolute top-0 bottom-0 left-0 w-1/4 bg-primary"
+            animate={{ x: ["-100%", "400%"] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          />
+        </div>
+      </div>
+
+      <div 
+        className="w-full aspect-video relative overflow-hidden group cursor-pointer mb-8"
+        onClick={() => setSelectedIndex(0)}
+        data-testid="project-image-0"
+      >
+        <img 
+          src={heroImage.src} 
+          alt={heroImage.caption}
+          className="w-full h-full object-cover group-hover:brightness-110 transition-all duration-500 blur-0"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+        <div className="absolute bottom-6 left-6 right-6 font-mono text-sm text-white">
+          <span className="bg-primary text-primary-foreground px-2 py-1 text-xs mr-3 font-bold uppercase">{heroImage.type}</span>
+          {heroImage.caption}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {gridImages.map((img, idx) => {
+          const actualIndex = idx + 1;
+          return (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className="relative aspect-[4/3] group overflow-hidden cursor-pointer bg-muted border border-border"
+              onClick={() => setSelectedIndex(actualIndex)}
+              data-testid={`project-image-${actualIndex}`}
+            >
+              <img 
+                src={img.src} 
+                alt={img.caption}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out blur-0"
+                loading="lazy"
+              />
+              <div className="absolute top-2 left-2 bg-primary text-primary-foreground font-mono text-[10px] px-2 py-0.5 uppercase z-10 shadow-sm">
+                {img.type}
+              </div>
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary transition-colors pointer-events-none z-20" />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+                <p className="text-white font-mono text-xs line-clamp-2">{img.caption}</p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <AnimatePresence>
+        {selectedIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[10000] bg-black/95 flex items-center justify-center backdrop-blur-sm"
+            onClick={() => setSelectedIndex(null)}
+            data-testid="lightbox-overlay"
+          >
+            <button 
+              className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors"
+              onClick={(e) => { e.stopPropagation(); setSelectedIndex(null); }}
+              data-testid="lightbox-close"
+            >
+              <X size={32} />
+            </button>
+
+            <button 
+              className="absolute left-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedIndex((prev) => (prev! - 1 + PROJECT_01_IMAGES.length) % PROJECT_01_IMAGES.length);
+              }}
+              data-testid="lightbox-prev"
+            >
+              <ChevronLeft size={48} />
+            </button>
+
+            <div 
+              className="relative max-w-[90vw] max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img 
+                src={PROJECT_01_IMAGES[selectedIndex].src} 
+                alt={PROJECT_01_IMAGES[selectedIndex].caption}
+                className="max-h-[80vh] object-contain mx-auto"
+              />
+              <div className="mt-4 text-center font-mono text-sm text-white/80">
+                <span className="text-primary mr-3">[{selectedIndex + 1}/{PROJECT_01_IMAGES.length}]</span>
+                {PROJECT_01_IMAGES[selectedIndex].caption}
+              </div>
+            </div>
+
+            <button 
+              className="absolute right-6 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedIndex((prev) => (prev! + 1) % PROJECT_01_IMAGES.length);
+              }}
+              data-testid="lightbox-next"
+            >
+              <ChevronRight size={48} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function Projects() {
   return (
@@ -146,6 +291,8 @@ function ProjectCard({ project, index, Icon }: { project: any, index: number, Ic
                 {project.result}
               </p>
             </div>
+
+            {project.id === "01" && <ProjectImageGallery />}
           </div>
 
         </div>

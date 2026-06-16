@@ -19,8 +19,23 @@ export default function Skills() {
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
 
+  const skillPercentages: Record<string, string> = {
+    "SolidWorks (CSWA Certified)": "90%",
+    "Fusion 360": "75%",
+    "CATIA": "70%",
+    "CFD": "95%",
+    "FEM": "90%",
+    "ANSYS": "92%",
+    "ABAQUS": "80%",
+    "SolidWorks Simulation": "88%",
+    "MATLAB": "80%",
+    "Python": "75%",
+    "C+": "65%",
+    "Arduino": "70%"
+  };
+
   return (
-    <section id="skills" className="py-32 relative overflow-hidden bg-background">
+    <section id="skills" className="py-32 relative overflow-hidden bg-background bg-hex-grid">
       <motion.div 
         ref={containerRef}
         variants={containerVariants}
@@ -40,6 +55,7 @@ export default function Skills() {
             id="SYS.01" 
             title="CAD / Design" 
             skills={DATA.skills.cad} 
+            percentages={skillPercentages}
             colorClass="text-primary" 
             bgClass="bg-primary"
             borderColorClass="border-primary"
@@ -50,6 +66,7 @@ export default function Skills() {
             id="SYS.02" 
             title="Simulation" 
             skills={DATA.skills.simulation} 
+            percentages={skillPercentages}
             colorClass="text-secondary" 
             bgClass="bg-secondary"
             borderColorClass="border-secondary"
@@ -60,6 +77,7 @@ export default function Skills() {
             id="SYS.03" 
             title="Programming / Data" 
             skills={DATA.skills.programming} 
+            percentages={skillPercentages}
             colorClass="text-primary" 
             bgClass="bg-primary"
             borderColorClass="border-primary"
@@ -79,7 +97,7 @@ export default function Skills() {
   );
 }
 
-function SkillCard({ id, title, skills, colorClass, bgClass, borderColorClass, variants }: any) {
+function SkillCard({ id, title, skills, percentages, colorClass, bgClass, borderColorClass, variants }: any) {
   return (
     <motion.div variants={variants} className="border border-border bg-card p-10 relative group hover:border-muted-foreground transition-colors">
       <div className="absolute top-0 right-0 bg-muted px-4 py-2 font-mono text-xs text-muted-foreground tracking-widest border-b border-l border-border group-hover:text-foreground transition-colors">
@@ -92,25 +110,28 @@ function SkillCard({ id, title, skills, colorClass, bgClass, borderColorClass, v
       </h3>
       
       <ul className="space-y-6 font-mono text-sm">
-        {skills.map((skill: string, index: number) => (
-          <li key={skill} className="relative">
-            <div className="flex justify-between items-center mb-2 z-10 relative">
-              <span className="text-muted-foreground group-hover:text-foreground transition-colors">{skill}</span>
-              <span className={`${colorClass} opacity-70`}>100%</span>
-            </div>
-            {/* Progress bar background */}
-            <div className="h-[2px] w-full bg-muted">
-              {/* Progress bar fill with animation */}
-              <motion.div 
-                initial={{ width: 0 }}
-                whileInView={{ width: "100%" }}
-                transition={{ duration: 1, delay: 0.2 + (index * 0.1), ease: "easeOut" }}
-                viewport={{ once: true }}
-                className={`h-full ${bgClass} opacity-50 group-hover:opacity-100 transition-opacity`} 
-              />
-            </div>
-          </li>
-        ))}
+        {skills.map((skill: string, index: number) => {
+          const percent = percentages[skill] || "80%";
+          return (
+            <li key={skill} className="relative">
+              <div className="flex justify-between items-center mb-2 z-10 relative">
+                <span className="text-muted-foreground group-hover:text-foreground transition-colors">{skill}</span>
+                <span className={`${colorClass} opacity-70`}>{percent}</span>
+              </div>
+              {/* Progress bar background */}
+              <div className="h-[4px] w-full bg-muted">
+                {/* Progress bar fill with animation */}
+                <motion.div 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: percent }}
+                  transition={{ duration: 1.5, delay: 0.2 + (index * 0.1), ease: "easeOut" }}
+                  viewport={{ once: true }}
+                  className={`h-full ${bgClass} opacity-80 group-hover:opacity-100 transition-opacity`} 
+                />
+              </div>
+            </li>
+          );
+        })}
       </ul>
       
       {/* Hover corner brackets */}
