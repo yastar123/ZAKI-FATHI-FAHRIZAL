@@ -13,6 +13,12 @@ export const DATA = {
     scholarship: "Indonesia Maju Scholar — Fully Funded by Indonesian Ministry of Education",
     bio: "Precision-driven engineering mind simulating blood flow in artificial hearts, designing underwater robots, and analyzing cement kilns using CFD/FEA. I think in systems and build in detail."
   },
+  stats: [
+    { value: 5, suffix: "+", label: "Active Projects" },
+    { value: 1450, suffix: "°C", label: "Max Kiln Temperature" },
+    { value: 3, suffix: "x", label: "International Teams" },
+    { value: 72, suffix: "m", label: "Kiln Length Analyzed" }
+  ],
   projects: [
     {
       id: "01",
@@ -28,14 +34,48 @@ export const DATA = {
     },
     {
       id: "02",
-      title: "Thermo-Structural Analysis of Refractory Brick Layer in Rotary Kiln",
+      title: "Thermo-Structural Analysis with Internal Combustion Expansion Effect on Refractory Brick for Rotary Kiln",
       role: "Process Engineering Intern",
-      company: "PT Semen Baturaja Tbk",
+      company: "PT Semen Baturaja Tbk, Indonesia",
       date: "Dec 2025 – Present",
-      what: "FEA + thermal analysis of refractory bricks inside a rotary kiln operating at 1450°C combustion temperature. Bricks expand due to temperature gradients and crack, causing uneven heat transfer.",
-      method: "Kiln divided into 4 zones (Inlet, Burning, Cooling, Outlet). Boundary conditions (heat flux, convection, coating thickness) calculated from real infrared sensor measurements. CAD + real material properties inserted.",
-      result: "Max temperature in outer brick layer: 800–900°C at meter 36. Max stress: 35–39 MPa (safe — UTS ~400 MPa). Coating thickness estimable from thermal calculations.",
-      tools: ["ABAQUS FEA", "SolidWorks CAD", "Infrared sensor data", "Heat flux calculations"]
+      what: "FEA + thermal analysis of refractory bricks inside a 72m rotary kiln operating at 1450°C combustion temperature. Bricks expand due to temperature gradients and crack, causing uneven heat transfer that accelerates shell degradation.",
+      background: "The purpose of installing refractory bricks is to retain the heat from combustion inside the kiln, thereby reducing heat loss. Within the kiln structure, refractory bricks experience several forces triggered by significant temperature differences between the outside and inside. The bricks will expand and eventually crack. These cracks will cause uneven heat transfer — the outer shell receives more heat than usual and expands more rapidly, shortening its lifespan.",
+      problem: "The shell can experience a shorter lifespan due to thinning bricks caused by thermal expansion cracking, leading to uneven heat distribution and accelerated structural degradation.",
+      solution: "The position of the shell's temperature distribution and its expansion effects can be tracked, so that the shell can be further optimized — adding stiffeners or replacing it with a stronger type of steel where hotspots are identified.",
+      methodSteps: [
+        "CAD Design Review and Drawing of kiln geometry",
+        "Brick and Shell Material properties inserted based on real specifications (ASTM A516 shell steel)",
+        "Theoretical Calculation of Heat Flux for Boundary Conditions",
+        "Kiln Divided into 4 main Zones: Inlet, Burning, Cooling, Outlet",
+        "Boundary Conditions (Heat Flux, Convection, Coating Thickness) calculated from real infrared sensor measurements",
+        "Final FEA + Thermal Module result extraction and post-processing"
+      ],
+      method: "Kiln divided into 4 zones (Inlet, Burning, Cooling, Outlet). Boundary conditions (heat flux, convection, coating thickness) calculated from real infrared sensor measurements. ANSYS 2025 R2 used for steady-state thermal + static structural analysis on a 72m kiln model with real material properties.",
+      results: [
+        {
+          number: "01",
+          title: "Temperature Distribution",
+          text: "The temperature distribution was successfully tracked across all 72m of kiln length. The highest temperature occurred at meter 36 (burning zone), with the outer refractory brick layer reaching 800–900°C — validated against infrared sensor readings.",
+          metric: "842°C Max Shell Temp"
+        },
+        {
+          number: "02",
+          title: "Structural Integrity",
+          text: "Maximum stress identified at 35–39 MPa in the kiln shell. The design was concluded safe: von-Mises stress, bending stress, and shear stress all fall below the compressive strength and ultimate tensile strength of ~400 MPa (ASTM A516).",
+          metric: "35-39 MPa Peak Stress"
+        },
+        {
+          number: "03",
+          title: "Coating Thickness Estimation",
+          text: "The coating thickness from melted clinker can be estimated through conduction and heat transfer calculations. This thickness is critical during inspections — if below the calculated minimum, patching is required to maintain shell temperature stability.",
+          metric: "50mm Coating Reference"
+        }
+      ],
+      result: "Max temperature in outer brick layer: 800–900°C at meter 36. Max stress: 35–39 MPa (safe — UTS ~400 MPa). Coating thickness estimable from thermal calculations for targeted maintenance.",
+      conclusion: "This calculation serves as a basis for determining a safe coating level in the kiln blasting zone, where bricks are susceptible to cracking due to the high gas temperature (1450°C). The expansion effect can be optimized by selecting the right brick type, preventing spontaneous expansion and ensuring the shell properly supports the kiln structure.",
+      benefits: "Shell material selection can be based on the external temperature distribution, allowing for the estimation of cracking points in the shell and subsequent reinforcement with stiffeners. This analysis provides actionable data for predictive maintenance scheduling.",
+      learnings: "I learned how the expansion of high-temperature gases can affect the mechanical performance of a rotary kiln. Measuring the refractory brick and shell expansion enables companies to optimize temperature control of the inner workings of rotary kilns, ensuring optimal firing temperatures and extended equipment lifespan.",
+      tools: ["ANSYS 2025 R2 FEA", "SolidWorks CAD", "Infrared Sensor Data", "Heat Flux Calculations", "ASTM A516 Steel"]
     },
     {
       id: "03",
