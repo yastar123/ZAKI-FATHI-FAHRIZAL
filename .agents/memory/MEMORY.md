@@ -1,0 +1,1 @@
+- [Portfolio redesign](portfolio-redesign.md) — white/light theme, 4-page SPA (/, /projects, /skills, /experience), wouter routing, photo in hero
