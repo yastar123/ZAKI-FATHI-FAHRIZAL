@@ -1,8 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "pnpm --filter @workspace/portfolio run build",
+  "framework": "vite",
+  "buildCommand": "pnpm --dir artifacts/portfolio run build && mkdir -p dist && cp -R artifacts/portfolio/dist/. dist/",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "artifacts/portfolio/dist",
+  "outputDirectory": "dist",
   "routes": [
     {
       "src": "/assets/(.*)",
