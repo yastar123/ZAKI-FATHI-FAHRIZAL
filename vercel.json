@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": "vite",
-  "buildCommand": "pnpm --dir artifacts/portfolio run build && mkdir -p dist && cp -R artifacts/portfolio/dist/. dist/",
+  "buildCommand": "pnpm run build",
   "installCommand": "pnpm install --frozen-lockfile",
   "outputDirectory": "dist",
   "routes": [
