@@ -47,3 +47,13 @@ externalPort = 80
 [[ports]]
 localPort = 5000
 externalPort = 5000
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://zpmijycyloldhaemrqek.supabase.co"
+VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_uefUrU9BhFj0KP5G35gtew_74Usu7eT"
+VITE_CLOUDINARY_CLOUD_NAME = "doypepawb"
+VITE_CLOUDINARY_API_KEY = "493952378858445"
+VITE_ADMIN_PASSWORD = "FR/x*bn-Z$E8X4!"
+VITE_CLOUDINARY_API_SECRET = "AL8IQnQNISp9kG_z70Z4lVfb8TQ"

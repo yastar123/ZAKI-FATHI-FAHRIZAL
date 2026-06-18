@@ -1,33 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useParams } from "wouter";
 import {
   ArrowLeft, ArrowRight, X, ChevronLeft, ChevronRight,
-  Building2, Calendar, Tag, ZoomIn, ChevronRight as Chevron
+  Building2, Calendar, Tag, ZoomIn, ChevronRight as Chevron, Loader2
 } from "lucide-react";
 import Navbar from "@/components/layout/navbar";
-import { DATA } from "@/data/portfolio";
-import {
-  PROJECT_01_IMAGES, PROJECT_02_IMAGES,
-  PROJECT_04_IMAGES, PROJECT_05_IMAGES,
-  type ProjectImage,
-} from "@/data/project-images";
+import { getProject, getProjects, getProjectImages } from "@/lib/db";
+import type { Project, ProjectImage } from "@/lib/types";
 
-const PROJECT_IMAGES: Record<string, ProjectImage[]> = {
-  "01": PROJECT_01_IMAGES,
-  "02": PROJECT_02_IMAGES,
-  "03": [],
-  "04": PROJECT_04_IMAGES,
-  "05": PROJECT_05_IMAGES,
+const BADGE_ACCENT: Record<string, { badge: string; color: string; bg: string; border: string; bar: string }> = {
+  "CFD Analysis":    { badge: "CFD Analysis",    color: "text-blue-700",    bg: "bg-blue-50",    border: "border-blue-200",   bar: "bg-blue-600" },
+  "FEA / Thermal":  { badge: "FEA / Thermal",   color: "text-violet-700",  bg: "bg-violet-50",  border: "border-violet-200", bar: "bg-violet-600" },
+  "Biomedical CFD": { badge: "Biomedical CFD",   color: "text-rose-700",    bg: "bg-rose-50",    border: "border-rose-200",   bar: "bg-rose-600" },
+  "ROV Design":     { badge: "ROV Design",       color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200", bar: "bg-emerald-600" },
+  "Structural FEA": { badge: "Structural FEA",   color: "text-amber-700",   bg: "bg-amber-50",   border: "border-amber-200",  bar: "bg-amber-600" },
 };
 
-const PROJECT_ACCENT: Record<string, { badge: string; color: string; bg: string; border: string; bar: string }> = {
-  "01": { badge: "CFD Analysis", color: "text-blue-700", bg: "bg-blue-50", border: "border-blue-200", bar: "bg-blue-600" },
-  "02": { badge: "FEA / Thermal", color: "text-violet-700", bg: "bg-violet-50", border: "border-violet-200", bar: "bg-violet-600" },
-  "03": { badge: "Biomedical CFD", color: "text-rose-700", bg: "bg-rose-50", border: "border-rose-200", bar: "bg-rose-600" },
-  "04": { badge: "ROV Design", color: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200", bar: "bg-emerald-600" },
-  "05": { badge: "Structural FEA", color: "text-amber-700", bg: "bg-amber-50", border: "border-amber-200", bar: "bg-amber-600" },
-};
+function getAccent(badge: string) {
+  return BADGE_ACCENT[badge] ?? { badge: badge || "Project", color: "text-gray-700", bg: "bg-gray-50", border: "border-gray-200", bar: "bg-gray-600" };
+}
 
 // ── Lightbox ──────────────────────────────────────────────────────────────────
 function Lightbox({ images, index, onClose }: { images: ProjectImage[]; index: number; onClose: () => void }) {
@@ -37,9 +29,7 @@ function Lightbox({ images, index, onClose }: { images: ProjectImage[]; index: n
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-black/92 flex items-center justify-center p-4"
       onClick={onClose}
     >
@@ -62,9 +52,7 @@ function Lightbox({ images, index, onClose }: { images: ProjectImage[]; index: n
             key={current}
             src={images[current].src}
             alt={images[current].caption}
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
+            initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.18 }}
             className="max-h-[72vh] w-full object-contain rounded-xl"
           />
@@ -100,7 +88,7 @@ function ImageGrid({ images, onOpen }: { images: ProjectImage[]; onOpen: (i: num
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
       {images.map((img, i) => (
-        <button key={i} onClick={() => onOpen(i)}
+        <button key={img.id ?? i} onClick={() => onOpen(i)}
           className="relative aspect-video rounded-xl overflow-hidden group bg-muted border border-border hover:border-primary/30 hover:shadow-md transition-all"
         >
           <img src={img.src} alt={img.caption} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -138,15 +126,40 @@ export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
 
-  const projectIndex = DATA.projects.findIndex((p) => p.id === projectId);
-  const project = DATA.projects[projectIndex];
-  const images = PROJECT_IMAGES[projectId] ?? [];
-  const accent = PROJECT_ACCENT[projectId] ?? PROJECT_ACCENT["01"];
-
-  const prevProject = projectIndex > 0 ? DATA.projects[projectIndex - 1] : null;
-  const nextProject = projectIndex < DATA.projects.length - 1 ? DATA.projects[projectIndex + 1] : null;
-
+  const [project, setProject] = useState<Project | null>(null);
+  const [images, setImages] = useState<ProjectImage[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        const [p, imgs, all] = await Promise.all([
+          getProject(projectId),
+          getProjectImages(projectId),
+          getProjects(),
+        ]);
+        setProject(p);
+        setImages(imgs);
+        setAllProjects(all);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [projectId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center text-muted-foreground">
+        <Loader2 size={20} className="animate-spin mr-2" /> Loading project…
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -159,14 +172,16 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const p = project as any;
+  const accent = getAccent(project.badge);
+  const projectIndex = allProjects.findIndex((p) => p.id === projectId);
+  const prevProject = projectIndex > 0 ? allProjects[projectIndex - 1] : null;
+  const nextProject = projectIndex < allProjects.length - 1 ? allProjects[projectIndex + 1] : null;
 
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-20">
-
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
           <Link href="/projects"><span className="hover:text-primary transition-colors cursor-pointer">Projects</span></Link>
@@ -182,21 +197,15 @@ export default function ProjectDetailPage() {
             </span>
             <span className="text-xs font-mono text-muted-foreground">Project #{project.id}</span>
           </div>
-
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight leading-snug mb-4">
-            {project.title}
-          </h1>
-
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight leading-snug mb-4">{project.title}</h1>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground mb-6">
             <span className="flex items-center gap-1.5"><Building2 size={14} />{project.company}</span>
             {project.role && <span className="italic">{project.role}</span>}
             <span className="flex items-center gap-1.5"><Calendar size={14} />{project.date}</span>
           </div>
-
-          {/* Tools */}
           {project.tools && project.tools.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              {project.tools.map((t: string) => (
+              {project.tools.map((t) => (
                 <span key={t} className="inline-flex items-center gap-1.5 tag-gray text-xs">
                   <Tag size={11} />{t}
                 </span>
@@ -218,51 +227,32 @@ export default function ProjectDetailPage() {
 
         {/* Content */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}
           className="grid grid-cols-1 lg:grid-cols-3 gap-8"
         >
-          {/* Left column — main content */}
+          {/* Left column */}
           <div className="lg:col-span-2 space-y-8">
-            {p.what && (
-              <Section label="Overview">
-                <p className="text-base text-foreground/80 leading-relaxed">{p.what}</p>
-              </Section>
-            )}
-
-            {p.background && (
-              <Section label="Background">
-                <p className="text-sm text-foreground/80 leading-relaxed">{p.background}</p>
-              </Section>
-            )}
-
-            {p.problem && (
+            {project.what && <Section label="Overview"><p className="text-base text-foreground/80 leading-relaxed">{project.what}</p></Section>}
+            {project.background && <Section label="Background"><p className="text-sm text-foreground/80 leading-relaxed">{project.background}</p></Section>}
+            {project.problem && (
               <Section label="Problem">
                 <div className="bg-red-50 border border-red-100 rounded-xl p-4">
-                  <p className="text-sm text-foreground/80 leading-relaxed">{p.problem}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{project.problem}</p>
                 </div>
               </Section>
             )}
-
-            {p.solution && (
+            {project.solution && (
               <Section label="Solution">
                 <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
-                  <p className="text-sm text-foreground/80 leading-relaxed">{p.solution}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{project.solution}</p>
                 </div>
               </Section>
             )}
-
-            {p.method && (
-              <Section label="Methodology">
-                <p className="text-sm text-foreground/80 leading-relaxed">{p.method}</p>
-              </Section>
-            )}
-
-            {p.methodSteps && p.methodSteps.length > 0 && (
+            {project.method && <Section label="Methodology"><p className="text-sm text-foreground/80 leading-relaxed">{project.method}</p></Section>}
+            {project.method_steps && project.method_steps.length > 0 && (
               <Section label="Step-by-step Process">
                 <ol className="space-y-3">
-                  {p.methodSteps.map((step: string, i: number) => (
+                  {project.method_steps.map((step, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span className={`flex-shrink-0 w-6 h-6 ${accent.bar} text-white text-xs font-bold rounded-full flex items-center justify-center mt-0.5`}>
                         {i + 1}
@@ -273,11 +263,10 @@ export default function ProjectDetailPage() {
                 </ol>
               </Section>
             )}
-
-            {p.results && Array.isArray(p.results) && p.results.length > 0 && (
+            {project.results && Array.isArray(project.results) && project.results.length > 0 && (
               <Section label="Results">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {p.results.map((r: any) => (
+                  {project.results.map((r) => (
                     <div key={r.number} className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
                       <div className={`text-xs font-mono ${accent.color} mb-2`}>{r.number}</div>
                       <div className="font-semibold text-sm text-foreground mb-2">{r.title}</div>
@@ -288,23 +277,12 @@ export default function ProjectDetailPage() {
                 </div>
               </Section>
             )}
-
-            {p.conclusion && (
-              <Section label="Conclusion">
-                <p className="text-sm text-foreground/80 leading-relaxed">{p.conclusion}</p>
-              </Section>
-            )}
-
-            {p.benefits && (
-              <Section label="Business Benefits">
-                <p className="text-sm text-foreground/80 leading-relaxed">{p.benefits}</p>
-              </Section>
-            )}
-
-            {p.learnings && (
+            {project.conclusion && <Section label="Conclusion"><p className="text-sm text-foreground/80 leading-relaxed">{project.conclusion}</p></Section>}
+            {project.benefits && <Section label="Business Benefits"><p className="text-sm text-foreground/80 leading-relaxed">{project.benefits}</p></Section>}
+            {project.learnings && (
               <Section label="What I Learned">
                 <div className="border-l-4 border-primary/30 pl-4 py-1">
-                  <p className="text-sm text-foreground/80 leading-relaxed italic">{p.learnings}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed italic">{project.learnings}</p>
                 </div>
               </Section>
             )}
@@ -312,27 +290,20 @@ export default function ProjectDetailPage() {
 
           {/* Right column — sidebar */}
           <div className="space-y-5">
-            {/* Key outcome */}
-            {p.result && (
+            {project.result && (
               <div className={`${accent.bg} border ${accent.border} rounded-xl p-5`}>
                 <p className={`text-xs font-semibold uppercase tracking-wider ${accent.color} mb-2`}>Key Outcome</p>
-                <p className="text-sm text-foreground/80 leading-relaxed">{p.result}</p>
+                <p className="text-sm text-foreground/80 leading-relaxed">{project.result}</p>
               </div>
             )}
-
-            {/* Tools */}
             {project.tools && project.tools.length > 0 && (
               <div className="bg-card border border-border rounded-xl p-5">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Tools Used</p>
                 <div className="flex flex-wrap gap-2">
-                  {project.tools.map((t: string) => (
-                    <span key={t} className="tag-gray text-xs">{t}</span>
-                  ))}
+                  {project.tools.map((t) => <span key={t} className="tag-gray text-xs">{t}</span>)}
                 </div>
               </div>
             )}
-
-            {/* Project details */}
             <div className="bg-card border border-border rounded-xl p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Project Details</p>
               <div className="space-y-3 text-sm">
@@ -372,7 +343,6 @@ export default function ProjectDetailPage() {
               </div>
             </Link>
           ) : <div />}
-
           {nextProject && (
             <Link href={`/projects/${nextProject.id}`}>
               <div className="flex items-center justify-end gap-3 p-4 rounded-xl border border-border hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer group text-right">

@@ -8,6 +8,8 @@ import ProjectsPage from "@/pages/projects";
 import ProjectDetailPage from "@/pages/project-detail";
 import SkillsPage from "@/pages/skills";
 import ExperiencePage from "@/pages/experience";
+import AdminPage from "@/pages/admin";
+import AdminProjectForm from "@/pages/admin-project-form";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +21,14 @@ function Router() {
       <Route path="/projects/:id" component={ProjectDetailPage} />
       <Route path="/skills" component={SkillsPage} />
       <Route path="/experience" component={ExperiencePage} />
+      {/* Admin routes */}
+      <Route path="/admin" component={AdminPage} />
+      <Route path="/admin/projects/new">
+        {() => <AdminProjectForm />}
+      </Route>
+      <Route path="/admin/projects/:id/edit">
+        {(params) => <AdminProjectForm projectId={params.id} />}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );
