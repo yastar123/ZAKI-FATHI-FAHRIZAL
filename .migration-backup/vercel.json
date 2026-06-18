@@ -1,10 +1,22 @@
 {
   "version": 2,
-  "buildCommand": "pnpm --dir artifacts/portfolio run build",
+  "framework": "vite",
+  "buildCommand": "pnpm run build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "artifacts/portfolio/dist/public",
+  "outputDirectory": "dist",
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "/.*", "dest": "/index.html" }
+    {
+      "src": "/assets/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
