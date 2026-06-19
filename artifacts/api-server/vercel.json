@@ -1,11 +1,5 @@
 {
-  "buildCommand": "cd artifacts/api-server && pnpm install && pnpm run build",
-  "outputDirectory": "artifacts/api-server/dist",
-  "framework": null,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/server.mjs"
-    }
-  ]
+  "buildCommand": "pnpm install && pnpm run build",
+  "outputDirectory": "dist",
+  "framework": null
 }
