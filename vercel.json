@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd artifacts/api-server && pnpm install && pnpm run build",
+  "outputDirectory": "artifacts/api-server/dist",
+  "framework": null,
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
