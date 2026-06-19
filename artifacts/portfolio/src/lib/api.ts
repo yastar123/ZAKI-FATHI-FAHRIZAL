@@ -4,7 +4,13 @@ import type { Project, ProjectImage } from "./types";
 // ── Projects ──────────────────────────────────────────────────────────────────
 
 export async function getProjects(): Promise<Project[]> {
-  return customFetch<Project[]>("/api/projects");
+  try {
+    const data = await customFetch<Project[]>("/api/projects");
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
 }
 
 export async function getProject(id: string): Promise<Project | null> {
@@ -75,7 +81,13 @@ export async function copyProjectImages(
 export async function getProjectImages(
   projectId: string,
 ): Promise<ProjectImage[]> {
-  return customFetch<ProjectImage[]>(`/api/project-images/project/${projectId}`);
+  try {
+    const data = await customFetch<ProjectImage[]>(`/api/project-images/project/${projectId}`);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching project images:", error);
+    return [];
+  }
 }
 
 export async function addProjectImage(
