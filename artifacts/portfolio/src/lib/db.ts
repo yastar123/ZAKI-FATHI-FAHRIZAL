@@ -22,7 +22,9 @@ export async function getProject(id: string): Promise<Project | null> {
   return data as Project;
 }
 
-export async function createProject(project: Omit<Project, "created_at" | "updated_at">): Promise<Project> {
+export async function createProject(
+  project: Omit<Project, "created_at" | "updated_at">,
+): Promise<Project> {
   const { data, error } = await supabase
     .from("projects")
     .insert(project)
@@ -32,7 +34,10 @@ export async function createProject(project: Omit<Project, "created_at" | "updat
   return data as Project;
 }
 
-export async function updateProject(id: string, updates: Partial<Project>): Promise<Project> {
+export async function updateProject(
+  id: string,
+  updates: Partial<Project>,
+): Promise<Project> {
   const { data, error } = await supabase
     .from("projects")
     .update({ ...updates, updated_at: new Date().toISOString() })
@@ -48,9 +53,35 @@ export async function deleteProject(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function copyProjectImages(
+  sourceProjectId: string,
+  targetProjectId: string,
+): Promise<number> {
+  const { data: images, error: fetchError } = await supabase
+    .from("project_images")
+    .select("*")
+    .eq("project_id", sourceProjectId)
+    .order("display_order", { ascending: true });
+
+  if (fetchError) throw fetchError;
+  if (!images || images.length === 0) return 0;
+
+  const rows = images.map(({ id, created_at, updated_at, ...img }) => ({
+    ...img,
+    project_id: targetProjectId,
+  }));
+
+  const { error } = await supabase.from("project_images").insert(rows);
+  if (error) throw error;
+
+  return rows.length;
+}
+
 // ── Project Images ────────────────────────────────────────────────────────────
 
-export async function getProjectImages(projectId: string): Promise<ProjectImage[]> {
+export async function getProjectImages(
+  projectId: string,
+): Promise<ProjectImage[]> {
   const { data, error } = await supabase
     .from("project_images")
     .select("*")
@@ -65,7 +96,7 @@ export async function addProjectImage(
   src: string,
   caption: string,
   type = "site",
-  order = 0
+  order = 0,
 ): Promise<ProjectImage> {
   const { data, error } = await supabase
     .from("project_images")
@@ -76,8 +107,14 @@ export async function addProjectImage(
   return data as ProjectImage;
 }
 
-export async function updateProjectImage(id: string, updates: Partial<ProjectImage>): Promise<void> {
-  const { error } = await supabase.from("project_images").update(updates).eq("id", id);
+export async function updateProjectImage(
+  id: string,
+  updates: Partial<ProjectImage>,
+): Promise<void> {
+  const { error } = await supabase
+    .from("project_images")
+    .update(updates)
+    .eq("id", id);
   if (error) throw error;
 }
 
@@ -86,8 +123,13 @@ export async function deleteProjectImage(id: string): Promise<void> {
   if (error) throw error;
 }
 
-export async function reorderImages(images: { id: string; display_order: number }[]): Promise<void> {
+export async function reorderImages(
+  images: { id: string; display_order: number }[],
+): Promise<void> {
   for (const img of images) {
-    await supabase.from("project_images").update({ display_order: img.display_order }).eq("id", img.id);
+    await supabase
+      .from("project_images")
+      .update({ display_order: img.display_order })
+      .eq("id", img.id);
   }
 }
