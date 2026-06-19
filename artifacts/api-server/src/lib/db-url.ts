@@ -9,7 +9,9 @@ export function normalizeDatabaseUrl(value: string | undefined): string {
   try {
     const parsed = new URL(unquoted);
     if (parsed.protocol !== "postgres:" && parsed.protocol !== "postgresql:") {
-      throw new Error("DATABASE_URL must use postgres:// or postgresql:// protocol");
+      throw new Error(
+        "DATABASE_URL must use postgres:// or postgresql:// protocol",
+      );
     }
     return unquoted;
   } catch {

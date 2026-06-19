@@ -15,8 +15,5 @@ test("keeps valid postgres URLs unchanged", () => {
 });
 
 test("throws when DATABASE_URL is missing or malformed", () => {
-  assert.throws(
-    () => normalizeDatabaseUrl("not a valid url"),
-    /DATABASE_URL/i,
-  );
+  assert.throws(() => normalizeDatabaseUrl("not a valid url"), /DATABASE_URL/i);
 });
