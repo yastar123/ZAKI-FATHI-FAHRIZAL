@@ -106,8 +106,8 @@ export default function ExperiencePage() {
 
         {/* Timeline */}
         <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-5 sm:left-6 top-2 bottom-2 w-px bg-border" />
+          {/* Vertical line — centered on the dot (dot w-5=20px, left-[10px]: center at 20px) */}
+          <div className="absolute left-[19px] sm:left-[23px] top-2 bottom-2 w-px bg-border" />
 
           <div className="space-y-8">
             {DATA.experience.map((exp, i) => {
@@ -122,7 +122,7 @@ export default function ExperiencePage() {
                   className="relative pl-14 sm:pl-16"
                 >
                   {/* Timeline dot */}
-                  <div className={`absolute left-2 sm:left-3 top-6 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  <div className={`absolute left-[10px] sm:left-[14px] top-6 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                     isActive ? "border-primary bg-primary/10" : "border-border bg-white"
                   }`}>
                     {isActive && <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />}

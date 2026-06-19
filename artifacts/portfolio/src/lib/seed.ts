@@ -192,6 +192,9 @@ export async function runSeeder(
   const totalImages = Object.values(SEED_IMAGES).reduce((acc, arr) => acc + arr.length, 0);
 
   for (const [projectId, images] of Object.entries(SEED_IMAGES)) {
+    // Delete existing images for this project before inserting to avoid duplicates on re-run
+    await supabase.from("project_images").delete().eq("project_id", projectId);
+
     for (let j = 0; j < images.length; j++) {
       const img = images[j];
       onProgress({ step: `Uploading image ${j + 1}/${images.length} for project #${projectId}…`, done: imgDone, total: totalImages });

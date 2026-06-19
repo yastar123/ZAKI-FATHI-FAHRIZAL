@@ -248,6 +248,13 @@ export default function AdminProjectForm({ projectId }: Props) {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"basic" | "detail" | "images">("basic");
 
+  // Auth guard — redirect to /admin if not authenticated
+  useEffect(() => {
+    if (localStorage.getItem("admin_auth") !== "1") {
+      navigate("/admin");
+    }
+  }, [navigate]);
+
   useEffect(() => {
     if (!isNew && projectId) {
       getProject(projectId).then((p) => {
@@ -304,7 +311,7 @@ export default function AdminProjectForm({ projectId }: Props) {
               <ArrowLeft size={16} />
             </button>
           </Link>
-          <h1 className="text-sm font-semibold text-foreground">{isNew ? "New Project" : `Edit: ${form.title.slice(0, 40)}…`}</h1>
+          <h1 className="text-sm font-semibold text-foreground">{isNew ? "New Project" : `Edit: ${form.title.length > 40 ? form.title.slice(0, 40) + "…" : form.title}`}</h1>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/admin">
