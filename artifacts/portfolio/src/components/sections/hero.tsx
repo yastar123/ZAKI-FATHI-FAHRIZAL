@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { MapPin, GraduationCap, Award, ArrowRight, Mail } from "lucide-react";
@@ -20,11 +21,27 @@ const DOMAINS = [
 ];
 
 export default function Hero() {
+  const [profileImage, setProfileImage] = useState<string>(heroPhoto);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("portfolio_profile_photo");
+    if (saved) {
+      setProfileImage(saved);
+    }
+
+    const handleStorage = () => {
+      const updated = localStorage.getItem("portfolio_profile_photo");
+      setProfileImage(updated || heroPhoto);
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   return (
     <section className="min-h-screen pt-16 flex items-center bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
           {/* Left — text content */}
           <div>
             <motion.div
@@ -34,7 +51,9 @@ export default function Hero() {
               className="flex items-center gap-2 mb-6"
             >
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm text-muted-foreground font-medium">Available for Opportunities</span>
+              <span className="text-sm text-muted-foreground font-medium">
+                Available for Opportunities
+              </span>
             </motion.div>
 
             <motion.h1
@@ -43,7 +62,8 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight leading-[1.1] mb-4"
             >
-              Zaki Fathi<br />
+              Zaki Fathi
+              <br />
               <span className="text-primary">Fahrizal</span>
             </motion.h1>
 
@@ -84,7 +104,9 @@ export default function Hero() {
               className="flex flex-wrap gap-2 mb-8"
             >
               {DOMAINS.map((d) => (
-                <span key={d} className="tag">{d}</span>
+                <span key={d} className="tag">
+                  {d}
+                </span>
               ))}
             </motion.div>
 
@@ -122,7 +144,7 @@ export default function Hero() {
             <div className="relative">
               <div className="w-72 h-72 sm:w-80 sm:h-80 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 overflow-hidden flex items-end justify-center">
                 <img
-                  src={heroPhoto}
+                  src={profileImage}
                   alt="Zaki Fathi Fahrizal"
                   className="w-full h-full object-contain object-bottom"
                 />
@@ -131,8 +153,12 @@ export default function Hero() {
               <div className="absolute -bottom-3 -right-3 bg-white border border-border rounded-xl px-3 py-2 shadow-md flex items-center gap-2">
                 <Award size={16} className="text-primary" />
                 <div>
-                  <div className="text-xs font-semibold text-foreground">Indonesia Maju</div>
-                  <div className="text-[10px] text-muted-foreground">Full Scholarship</div>
+                  <div className="text-xs font-semibold text-foreground">
+                    Indonesia Maju
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Full Scholarship
+                  </div>
                 </div>
               </div>
             </div>
@@ -140,9 +166,16 @@ export default function Hero() {
             {/* Stats row */}
             <div className="grid grid-cols-4 gap-3 w-full max-w-xs sm:max-w-sm">
               {QUICK_STATS.map((s) => (
-                <div key={s.label} className="bg-card border border-border rounded-lg p-2 text-center">
-                  <div className="text-base font-bold text-primary">{s.value}</div>
-                  <div className="text-[10px] text-muted-foreground mt-0.5">{s.label}</div>
+                <div
+                  key={s.label}
+                  className="bg-card border border-border rounded-lg p-2 text-center"
+                >
+                  <div className="text-base font-bold text-primary">
+                    {s.value}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">
+                    {s.label}
+                  </div>
                 </div>
               ))}
             </div>

@@ -2,23 +2,49 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
-  Plus, Pencil, Trash2, Database, LogOut, ArrowUpDown,
-  AlertTriangle, CheckCircle2, Loader2, Images, RefreshCw, ExternalLink
+  Plus,
+  Pencil,
+  Trash2,
+  Database,
+  LogOut,
+  ArrowUpDown,
+  AlertTriangle,
+  CheckCircle2,
+  Loader2,
+  Images,
+  RefreshCw,
+  ExternalLink,
+  ImageUp,
+  UserCircle2,
 } from "lucide-react";
 import AdminLogin from "./admin-login";
 import { getProjects, deleteProject } from "@/lib/db";
 import { runSeeder, type SeedProgress } from "@/lib/seed";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import type { Project } from "@/lib/types";
 
 // ── Auth guard ────────────────────────────────────────────────────────────────
 function useAdminAuth() {
-  const [authed, setAuthed] = useState(() => localStorage.getItem("admin_auth") === "1");
-  const logout = () => { localStorage.removeItem("admin_auth"); setAuthed(false); };
+  const [authed, setAuthed] = useState(
+    () => localStorage.getItem("admin_auth") === "1",
+  );
+  const logout = () => {
+    localStorage.removeItem("admin_auth");
+    setAuthed(false);
+  };
   return { authed, login: () => setAuthed(true), logout };
 }
 
 // ── Confirm dialog ────────────────────────────────────────────────────────────
-function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onConfirm: () => void; onCancel: () => void }) {
+function ConfirmDialog({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
   return (
     <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl border border-border shadow-lg p-6 max-w-sm w-full">
@@ -27,8 +53,18 @@ function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onCo
           <p className="text-sm text-foreground">{message}</p>
         </div>
         <div className="flex gap-3 justify-end">
-          <button onClick={onCancel} className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-gray-50">Cancel</button>
-          <button onClick={onConfirm} className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -60,26 +96,39 @@ function SeederModal({ onClose }: { onClose: () => void }) {
       <div className="bg-white rounded-2xl border border-border shadow-lg p-6 max-w-md w-full">
         <h2 className="font-semibold text-foreground mb-1">Seed Database</h2>
         <p className="text-sm text-muted-foreground mb-5">
-          This will import all 5 hardcoded projects into Supabase and upload their images to Cloudinary. Run once on first setup. Safe to re-run (upsert).
+          This will import all 5 hardcoded projects into Supabase and upload
+          their images to Cloudinary. Run once on first setup. Safe to re-run
+          (upsert).
         </p>
 
         {progress && (
           <div className="mb-4 bg-gray-50 border border-border rounded-xl p-4">
-            <div className="text-xs text-muted-foreground mb-2">{progress.step}</div>
+            <div className="text-xs text-muted-foreground mb-2">
+              {progress.step}
+            </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5">
               <div
                 className="bg-primary h-1.5 rounded-full transition-all duration-300"
-                style={{ width: progress.total > 0 ? `${(progress.done / progress.total) * 100}%` : "0%" }}
+                style={{
+                  width:
+                    progress.total > 0
+                      ? `${(progress.done / progress.total) * 100}%`
+                      : "0%",
+                }}
               />
             </div>
-            <div className="text-xs text-muted-foreground mt-1">{progress.done}/{progress.total}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {progress.done}/{progress.total}
+            </div>
           </div>
         )}
 
         {done && (
           <div className="mb-4 flex items-center gap-2 text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">
             <CheckCircle2 size={16} className="flex-shrink-0" />
-            <span className="text-sm">Seeding complete! Refresh the projects page to see results.</span>
+            <span className="text-sm">
+              Seeding complete! Refresh the projects page to see results.
+            </span>
           </div>
         )}
 
@@ -91,12 +140,24 @@ function SeederModal({ onClose }: { onClose: () => void }) {
         )}
 
         <div className="flex gap-3 justify-end">
-          <button onClick={onClose} disabled={running} className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-gray-50 disabled:opacity-50">
+          <button
+            onClick={onClose}
+            disabled={running}
+            className="px-4 py-2 text-sm border border-border rounded-lg hover:bg-gray-50 disabled:opacity-50"
+          >
             {done ? "Close" : "Cancel"}
           </button>
           {!done && (
-            <button onClick={start} disabled={running} className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-60">
-              {running ? <Loader2 size={14} className="animate-spin" /> : <Database size={14} />}
+            <button
+              onClick={start}
+              disabled={running}
+              className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-60"
+            >
+              {running ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Database size={14} />
+              )}
               {running ? "Seeding…" : "Run Seeder"}
             </button>
           )}
@@ -113,23 +174,68 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [showSeeder, setShowSeeder] = useState(false);
+  const [uploadingProfile, setUploadingProfile] = useState(false);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
+  const [profileError, setProfileError] = useState("");
   const [toast, setToast] = useState("");
+
+  const PROFILE_PHOTO_KEY = "portfolio_profile_photo";
 
   const load = useCallback(async () => {
     setLoading(true);
-    try { setProjects(await getProjects()); } catch { /* ignore */ }
-    finally { setLoading(false); }
+    try {
+      setProjects(await getProjects());
+    } catch {
+      /* ignore */
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => { if (authed) load(); }, [authed, load]);
+  useEffect(() => {
+    if (authed) load();
+
+    const saved = localStorage.getItem(PROFILE_PHOTO_KEY);
+    if (saved) setProfilePhotoUrl(saved);
+  }, [authed, load]);
 
   async function handleDelete(id: string) {
     try {
       await deleteProject(id);
       setProjects((prev) => prev.filter((p) => p.id !== id));
       showToast("Project deleted.");
-    } catch (e: any) { showToast("Error: " + e.message); }
+    } catch (e: any) {
+      showToast("Error: " + e.message);
+    }
     setConfirmDelete(null);
+  }
+
+  async function handleProfilePhotoUpload(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingProfile(true);
+    setProfileError("");
+
+    try {
+      const url = await uploadToCloudinary(file, "portfolio/profile");
+      localStorage.setItem(PROFILE_PHOTO_KEY, url);
+      setProfilePhotoUrl(url);
+      showToast("Profile photo updated.");
+    } catch (e: any) {
+      setProfileError(e.message ?? "Upload failed");
+    } finally {
+      setUploadingProfile(false);
+      event.target.value = "";
+    }
+  }
+
+  function handleProfilePhotoDelete() {
+    localStorage.removeItem(PROFILE_PHOTO_KEY);
+    setProfilePhotoUrl("");
+    showToast("Profile photo removed.");
   }
 
   function showToast(msg: string) {
@@ -148,26 +254,97 @@ export default function AdminPage() {
             <Database size={16} className="text-primary" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold text-foreground">Portfolio Admin</h1>
+            <h1 className="text-sm font-semibold text-foreground">
+              Portfolio Admin
+            </h1>
             <p className="text-xs text-muted-foreground">Projects Manager</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <a href="/" target="_blank" rel="noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-gray-50 text-muted-foreground">
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-gray-50 text-muted-foreground"
+          >
             <ExternalLink size={12} /> View Site
           </a>
-          <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-gray-50 text-muted-foreground">
+          <button
+            onClick={logout}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-gray-50 text-muted-foreground"
+          >
             <LogOut size={12} /> Logout
           </button>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="bg-white border border-border rounded-2xl p-6 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                Website Profile
+              </p>
+              <h2 className="text-lg font-semibold text-foreground">
+                Hero Photo
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 cursor-pointer">
+                <ImageUp size={14} />
+                {uploadingProfile ? "Uploading…" : "Upload Photo"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfilePhotoUpload}
+                />
+              </label>
+              <button
+                onClick={handleProfilePhotoDelete}
+                disabled={!profilePhotoUrl}
+                className="inline-flex items-center gap-2 px-3 py-2 text-sm border border-border rounded-lg hover:bg-gray-50 disabled:opacity-40"
+              >
+                <Trash2 size={14} /> Remove
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col sm:flex-row gap-4 items-start">
+            <div className="w-28 h-28 rounded-2xl border border-border bg-gray-50 overflow-hidden flex items-center justify-center">
+              {profilePhotoUrl ? (
+                <img
+                  src={profilePhotoUrl}
+                  alt="Profile preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <UserCircle2 size={56} className="text-muted-foreground" />
+              )}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <p>Upload a new hero image for the portfolio homepage.</p>
+              <p className="mt-1">
+                Current photo will be shown automatically on the site.
+              </p>
+            </div>
+          </div>
+
+          {profileError && (
+            <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
+              {profileError}
+            </div>
+          )}
+        </div>
+
         {/* Action bar */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-lg font-semibold text-foreground">Projects</h2>
-            <p className="text-sm text-muted-foreground">{projects.length} project{projects.length !== 1 ? "s" : ""} in database</p>
+            <p className="text-sm text-muted-foreground">
+              {projects.length} project{projects.length !== 1 ? "s" : ""} in
+              database
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -197,8 +374,13 @@ export default function AdminPage() {
           </div>
         ) : projects.length === 0 ? (
           <div className="bg-white border border-border rounded-2xl p-12 text-center">
-            <Database size={32} className="mx-auto mb-3 text-muted-foreground opacity-40" />
-            <p className="text-sm text-muted-foreground mb-4">No projects yet. Seed the database or create one manually.</p>
+            <Database
+              size={32}
+              className="mx-auto mb-3 text-muted-foreground opacity-40"
+            />
+            <p className="text-sm text-muted-foreground mb-4">
+              No projects yet. Seed the database or create one manually.
+            </p>
             <button
               onClick={() => setShowSeeder(true)}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90"
@@ -211,12 +393,21 @@ export default function AdminPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-gray-50">
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-12">#</th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Project</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Company</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Date</th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider w-12">
+                    #
+                  </th>
+                  <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Project
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">
+                    Company
+                  </th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
+                    Date
+                  </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden sm:table-cell w-20">
-                    <ArrowUpDown size={12} className="inline mr-1" />Order
+                    <ArrowUpDown size={12} className="inline mr-1" />
+                    Order
                   </th>
                   <th className="px-4 py-3 w-24" />
                 </tr>
@@ -231,22 +422,40 @@ export default function AdminPage() {
                     className="border-b border-border last:border-0 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-5 py-4">
-                      <span className="text-xs font-mono text-muted-foreground bg-gray-100 px-1.5 py-0.5 rounded">{project.id}</span>
+                      <span className="text-xs font-mono text-muted-foreground bg-gray-100 px-1.5 py-0.5 rounded">
+                        {project.id}
+                      </span>
                     </td>
                     <td className="px-5 py-4">
-                      <div className="font-medium text-foreground leading-snug line-clamp-1">{project.title}</div>
+                      <div className="font-medium text-foreground leading-snug line-clamp-1">
+                        {project.title}
+                      </div>
                       <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                        <span className="inline-block bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-medium">{project.badge}</span>
-                        <span className="flex items-center gap-0.5"><Images size={10} />{project.tools?.length ?? 0} tools</span>
+                        <span className="inline-block bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-medium">
+                          {project.badge}
+                        </span>
+                        <span className="flex items-center gap-0.5">
+                          <Images size={10} />
+                          {project.tools?.length ?? 0} tools
+                        </span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 text-muted-foreground hidden md:table-cell text-xs">{project.company}</td>
-                    <td className="px-4 py-4 text-muted-foreground hidden lg:table-cell text-xs">{project.date}</td>
-                    <td className="px-4 py-4 text-muted-foreground hidden sm:table-cell text-xs">{project.display_order}</td>
+                    <td className="px-4 py-4 text-muted-foreground hidden md:table-cell text-xs">
+                      {project.company}
+                    </td>
+                    <td className="px-4 py-4 text-muted-foreground hidden lg:table-cell text-xs">
+                      {project.date}
+                    </td>
+                    <td className="px-4 py-4 text-muted-foreground hidden sm:table-cell text-xs">
+                      {project.display_order}
+                    </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-1 justify-end">
                         <Link href={`/admin/projects/${project.id}/edit`}>
-                          <button className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors" title="Edit">
+                          <button
+                            className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"
+                            title="Edit"
+                          >
                             <Pencil size={14} />
                           </button>
                         </Link>
@@ -275,7 +484,14 @@ export default function AdminPage() {
           onCancel={() => setConfirmDelete(null)}
         />
       )}
-      {showSeeder && <SeederModal onClose={() => { setShowSeeder(false); load(); }} />}
+      {showSeeder && (
+        <SeederModal
+          onClose={() => {
+            setShowSeeder(false);
+            load();
+          }}
+        />
+      )}
 
       {/* Toast */}
       {toast && (
