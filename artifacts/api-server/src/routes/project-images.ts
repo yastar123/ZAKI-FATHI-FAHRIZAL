@@ -1,21 +1,38 @@
 import { Router, type IRouter } from "express";
 import { db, projectImagesTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 
 const router: IRouter = Router();
+
+function buildProjectImageLookupConditions(rawId: string) {
+  const trimmedId = rawId.trim();
+  const parsedId = Number(trimmedId);
+  const canonicalId = trimmedId.replace(/^0+/, "") || "0";
+
+  const conditions = [
+    sql`CAST(${projectImagesTable.project_id} AS TEXT) = ${trimmedId}`,
+    sql`CAST(${projectImagesTable.project_id} AS TEXT) = ${canonicalId}`,
+  ];
+
+  if (Number.isInteger(parsedId)) {
+    conditions.push(eq(projectImagesTable.project_id, parsedId));
+  }
+
+  return or(...conditions);
+}
 
 // Get all images for a project
 router.get("/project/:projectId", async (req, res) => {
   try {
-    const projectId = parseInt(req.params.projectId);
-    if (isNaN(projectId)) {
+    const projectId = req.params.projectId;
+    if (!projectId?.trim()) {
       return res.status(400).json({ error: "Invalid project ID" });
     }
 
     const images = await db
       .select()
       .from(projectImagesTable)
-      .where(eq(projectImagesTable.project_id, projectId))
+      .where(buildProjectImageLookupConditions(projectId))
       .orderBy(projectImagesTable.display_order);
 
     return res.json(images);

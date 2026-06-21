@@ -1,8 +1,25 @@
 import { Router, type IRouter } from "express";
 import { db, projectsTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { desc, eq, or, sql } from "drizzle-orm";
 
 const router: IRouter = Router();
+
+function buildProjectLookupConditions(rawId: string) {
+  const trimmedId = rawId.trim();
+  const parsedId = Number(trimmedId);
+  const canonicalId = trimmedId.replace(/^0+/, "") || "0";
+
+  const conditions = [
+    sql`CAST(${projectsTable.id} AS TEXT) = ${trimmedId}`,
+    sql`CAST(${projectsTable.id} AS TEXT) = ${canonicalId}`,
+  ];
+
+  if (Number.isInteger(parsedId)) {
+    conditions.push(eq(projectsTable.id, parsedId));
+  }
+
+  return or(...conditions);
+}
 
 // Get all projects
 router.get("/", async (_req, res) => {
@@ -21,15 +38,15 @@ router.get("/", async (_req, res) => {
 // Get single project by ID
 router.get("/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
+    const id = req.params.id;
+    if (!id?.trim()) {
       return res.status(400).json({ error: "Invalid project ID" });
     }
 
     const project = await db
       .select()
       .from(projectsTable)
-      .where(eq(projectsTable.id, id))
+      .where(buildProjectLookupConditions(id))
       .limit(1);
 
     if (project.length === 0) {
@@ -46,10 +63,7 @@ router.get("/:id", async (req, res) => {
 // Create new project
 router.post("/", async (req, res) => {
   try {
-    const project = await db
-      .insert(projectsTable)
-      .values(req.body)
-      .returning();
+    const project = await db.insert(projectsTable).values(req.body).returning();
 
     return res.status(201).json(project[0]);
   } catch (error) {
@@ -61,15 +75,15 @@ router.post("/", async (req, res) => {
 // Update project
 router.put("/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
+    const id = req.params.id;
+    if (!id?.trim()) {
       return res.status(400).json({ error: "Invalid project ID" });
     }
 
     const project = await db
       .update(projectsTable)
       .set({ ...req.body, updated_at: new Date() })
-      .where(eq(projectsTable.id, id))
+      .where(buildProjectLookupConditions(id))
       .returning();
 
     if (project.length === 0) {
@@ -86,14 +100,14 @@ router.put("/:id", async (req, res) => {
 // Delete project
 router.delete("/:id", async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
+    const id = req.params.id;
+    if (!id?.trim()) {
       return res.status(400).json({ error: "Invalid project ID" });
     }
 
     const project = await db
       .delete(projectsTable)
-      .where(eq(projectsTable.id, id))
+      .where(buildProjectLookupConditions(id))
       .returning();
 
     if (project.length === 0) {
